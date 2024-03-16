@@ -4,34 +4,41 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const bodyParser = require('body-parser');
+
 const { xss } = require('express-xss-sanitizer');
-const mongoSanitizer = require('express-mongo-sanitize');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const routes = require('./routes');
 
-const { handleError, convertToAPIError } = require('./middleware/apiError');
+const passport = require('passport');
+const { jwtStrategy } = require('./middleware/passport');
+const { handleError, convertToApiError } = require('./middleware/apiError');
 
 mongoose.connect(process.env.DB_URL).then(() => {
     console.log('connected');
 });
 
-//parsing
+// PARSING
 app.use(bodyParser.json());
 
-//sanitize
+// SANITIZE
 app.use(xss());
-app.use(mongoSanitizer());
+app.use(mongoSanitize());
 
+// PASSPORT
+app.use(passport.initialize());
+passport.use('jwt', jwtStrategy);
+
+// ROUTES
 app.use('/api', routes);
 
-//error handling
-app.use(convertToAPIError);
-
+// ERROR HANDLING
+app.use(convertToApiError);
 app.use((err, req, res, next) => {
     handleError(err, res);
 });
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
-    console.log(`running on port ${port}`);
+    console.log(`Server running on port ${port}`);
 });

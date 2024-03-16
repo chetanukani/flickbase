@@ -1,20 +1,19 @@
 const httpStatus = require('http-status');
 const { User } = require('../model/user');
 const userService = require('./user.service');
-const { APIError } = require('../middleware/apiError');
+const { ApiError } = require('../middleware/apiError');
 
 const createUser = async (email, password) => {
     try {
         if (await User.emailTaken(email)) {
-            // throw new Error('email taken');
-            throw new APIError(httpStatus.BAD_REQUEST, 'email taken');
+            // throw new Error('Sorry email taken')
+            throw new ApiError(httpStatus.BAD_REQUEST, 'Sorry email taken');
         }
 
         const user = new User({
             email,
             password,
         });
-
         await user.save();
         return user;
     } catch (error) {
@@ -27,17 +26,17 @@ const genAuthToken = (user) => {
     return token;
 };
 
-const signWithEmail = async (email, password) => {
+const signInWithEmailAndPassword = async (email, password) => {
     try {
-        //check email
-        //validate password
         const user = await userService.findUserByEmail(email);
         if (!user) {
-            throw new APIError(httpStatus.BAD_REQUEST, 'Bad email');
+            // throw new Error('Sorry BAD email');
+            throw new ApiError(httpStatus.BAD_REQUEST, 'Sorry BAD email');
         }
-
+        /// validate password
         if (!(await user.comparePassword(password))) {
-            throw new APIError(httpStatus.BAD_REQUEST, 'Bad password');
+            //throw new Error('Sorry BAD password');
+            throw new ApiError(httpStatus.BAD_REQUEST, 'Sorry BAD password');
         }
         return user;
     } catch (error) {
@@ -45,4 +44,8 @@ const signWithEmail = async (email, password) => {
     }
 };
 
-module.exports = { createUser, genAuthToken, signWithEmail };
+module.exports = {
+    createUser,
+    genAuthToken,
+    signInWithEmailAndPassword,
+};

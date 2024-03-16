@@ -2,17 +2,18 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: true,
-        trim: true,
         unique: true,
+        trim: true,
         lowercase: true,
         validate(value) {
             if (!validator.isEmail(value)) {
-                throw new Error('Invalid email');
+                throw new Error('Invalid Email');
             }
         },
     },
@@ -51,6 +52,7 @@ const userSchema = mongoose.Schema({
 
 userSchema.pre('save', async function (next) {
     let user = this;
+
     if (user.isModified('password')) {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(user.password, salt);
@@ -71,10 +73,19 @@ userSchema.methods.generateAuthToken = function () {
     return token;
 };
 
-userSchema.methods.comparePassword = async function (password) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
     const user = this;
-    const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(candidatePassword, user.password);
     return match;
+};
+
+userSchema.methods.generateRegisterToken = function () {
+    let user = this;
+    const userObj = { sub: user._id.toHexString() };
+    const token = jwt.sign(userObj, process.env.DB_SECRET, {
+        expiresIn: '10h',
+    });
+    return token;
 };
 
 const User = mongoose.model('User', userSchema);
