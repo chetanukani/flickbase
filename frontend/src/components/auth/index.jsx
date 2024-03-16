@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Formik, useFormik } from 'formik';
+import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
-import { Loader } from '../../utils/tools';
+import { Loader, errorHelper } from '../../utils/tools';
 
 const Auth = () => {
     const [register, setRegister] = useState(false);
@@ -18,8 +18,8 @@ const Auth = () => {
     const users = useSelector((state) => state.users);
     const notifications = useSelector((state) => state.notifications);
     const dispatch = useDispatch();
-    const form = useFormik({
-        initialValues: { email: 'chetan@mailinator.com', password: 'Test@123' },
+    const formik = useFormik({
+        initialValues: { email: '', password: '' },
         validationSchema: Yup.object({
             email: Yup.string()
                 .required('Sorry email is required')
@@ -53,9 +53,44 @@ const Auth = () => {
                             },
                         }}
                         component='form'
-                        onSubmit={Formik.handleSubmit}
+                        onSubmit={formik.handleSubmit}
                     >
-                        form
+                        <TextField
+                            name='email'
+                            label='enter your email'
+                            variant='outlined'
+                            {...formik.getFieldProps('email')}
+                            {...errorHelper(formik, 'email')}
+                        />
+
+                        <TextField
+                            name='password'
+                            label='enter your password'
+                            variant='outlined'
+                            type='password'
+                            {...formik.getFieldProps('password')}
+                            {...errorHelper(formik, 'password')}
+                        />
+
+                        <div className='mt-2'>
+                            <Button
+                                variant='contained'
+                                color='primary'
+                                type='submit'
+                                size='large'
+                            >
+                                {register ? 'Register' : 'Login'}
+                            </Button>
+                            <Button
+                                className='mt-3'
+                                variant='outlined'
+                                color='secondary'
+                                size='small'
+                                onClick={() => setRegister(!register)}
+                            >
+                                Want to {!register ? 'Register' : 'Login'}
+                            </Button>
+                        </div>
                     </Box>
                 )}
             </div>
