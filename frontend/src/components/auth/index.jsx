@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 import { Loader, errorHelper } from '../../utils/tools';
+import { registerUser, signInUser } from '../../store/actions/users';
 
 const Auth = () => {
     const [register, setRegister] = useState(false);
@@ -19,7 +20,7 @@ const Auth = () => {
     const notifications = useSelector((state) => state.notifications);
     const dispatch = useDispatch();
     const formik = useFormik({
-        initialValues: { email: '', password: '' },
+        initialValues: { email: 'chetan@mailinator.com', password: 'Test@123' },
         validationSchema: Yup.object({
             email: Yup.string()
                 .required('Sorry email is required')
@@ -34,8 +35,10 @@ const Auth = () => {
     const doHandleSubmit = (values) => {
         if (register) {
             //dispatch register
+            dispatch(registerUser(values));
         } else {
             //dispatch login
+            dispatch(signInUser(values));
         }
     };
     return (
