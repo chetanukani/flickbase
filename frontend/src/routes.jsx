@@ -5,9 +5,12 @@ import { isAuth } from './store/actions/users';
 import { Loader } from './utils/tools';
 
 import MainLayout from './hoc/mainLayout';
+import AuthGuard from './hoc/authGuard';
 import Home from './components/home';
 import Header from './components/navigation/header';
 import Auth from './components/auth';
+import Dashboard from './components/dashboard/index';
+import DashboardMain from './components/dashboard/main';
 
 const Router = () => {
     const [loading, setLoading] = useState(true);
@@ -33,8 +36,18 @@ const Router = () => {
                     <Header />
                     <MainLayout>
                         <Routes>
-                            <Route path='/auth' element={<Auth></Auth>} />
-                            <Route path='/' element={<Home></Home>} />
+                            <Route
+                                path='/dashboard'
+                                element={
+                                    <AuthGuard>
+                                        <Dashboard />
+                                    </AuthGuard>
+                                }
+                            >
+                                <Route index element={<DashboardMain />} />
+                            </Route>
+                            <Route path='/auth' element={<Auth />} />
+                            <Route path='/' element={<Home />} />
                         </Routes>
                     </MainLayout>
                 </>
