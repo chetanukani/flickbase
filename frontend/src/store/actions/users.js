@@ -1,12 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { errorGlobal, successGlobal } from '../reducers/notifications';
+import { getAuthHeader } from '../../utils/tools';
 import axios from 'axios';
 
 export const registerUser = createAsyncThunk(
     'users/registerUser',
     async ({ email, password }, { dispatch }) => {
         try {
-            const request = await axios.post(`api/auth/register`, {
+            const request = await axios.post(`/api/auth/register`, {
                 email,
                 password,
             });
@@ -24,7 +25,7 @@ export const signInUser = createAsyncThunk(
     'users/signInUser',
     async ({ email, password }, { dispatch }) => {
         try {
-            const request = await axios.post(`api/auth/signin`, {
+            const request = await axios.post(`/api/auth/signin`, {
                 email,
                 password,
             });
@@ -37,3 +38,12 @@ export const signInUser = createAsyncThunk(
         }
     }
 );
+
+export const isAuth = createAsyncThunk('users/isAuth', async () => {
+    try {
+        const request = await axios.get('/api/auth/isauth', getAuthHeader());
+        return { data: request.data, auth: true };
+    } catch (error) {
+        return { data: {}, auth: false };
+    }
+});
