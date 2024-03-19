@@ -4,13 +4,26 @@ import SideDrawer from './sideNavigation';
 import { clearNotifications } from '../../store/reducers/notifications';
 import { useDispatch, useSelector } from 'react-redux';
 import { showToast } from '../../utils/tools';
-import { signInUser, signOut } from '../../store/actions/users';
+import { signOut } from '../../store/actions/users';
+import { setLayout } from '../../store/reducers/site';
 
 const Header = () => {
     const users = useSelector((state) => state.users);
     const notifications = useSelector((state) => state.notifications);
+    const site = useSelector((state) => state.site);
+
     const dispatch = useDispatch();
     let navigate = useNavigate();
+    let location = useLocation();
+
+    useEffect(() => {
+        let pathName = location.pathname.split('/');
+        if (pathName[1] === 'dashboard') {
+            dispatch(setLayout('dash_layout'));
+        } else {
+            dispatch(setLayout(''));
+        }
+    }, [location.pathname, dispatch]);
 
     useEffect(() => {
         let { global } = notifications;
@@ -33,7 +46,7 @@ const Header = () => {
 
     return (
         <>
-            <nav className='navbar fixed-top'>
+            <nav className={`navbar fixed-top ${site.layout}`}>
                 <Link
                     to='/'
                     className='navbar-brand d-flex align-items-center fredoka_ff'

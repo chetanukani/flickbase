@@ -1,5 +1,12 @@
+import { AdminTitle } from '../../utils/tools';
+
 const DashboardMain = () => {
-    return <>Dashboard main</>;
+    return (
+        <>
+            <AdminTitle title='Dashboard' />
+            Dashboard main
+        </>
+    );
 };
 
 export default DashboardMain;
