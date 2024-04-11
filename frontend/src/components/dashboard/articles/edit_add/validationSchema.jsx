@@ -11,14 +11,14 @@ export const formValues = {
     category: '',
 };
 
-export const validation = () => {
+export const validation = () =>
     Yup.object({
         title: Yup.string().required('Sorry the title is required'),
         content: Yup.string()
             .required('Sorry the content is required')
             .min(50, 'That is it?.. writs some more'),
         excerpt: Yup.string()
-            .required('Sorry the title is required')
+            .required('Sorry the excerpt is required')
             .max(500, 'Sorry 500 max'),
         score: Yup.number()
             .required('Sorry the score is required')
@@ -31,4 +31,3 @@ export const validation = () => {
         status: Yup.string().required('Sorry the status is required'),
         category: Yup.string().required('Sorry the category is required'),
     });
-};
