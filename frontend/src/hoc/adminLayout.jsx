@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 
 const AdminLayout = (props) => {
     const users = useSelector((state) => state.users);
-    console.log(users);
     return (
         <>
             <div className='row adminLayout'>

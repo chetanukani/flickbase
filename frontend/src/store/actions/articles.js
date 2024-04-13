@@ -13,7 +13,23 @@ export const addArticle = createAsyncThunk(
                 getAuthHeader()
             );
             dispatch(successGlobal('Post created!!'));
-            return request.data
+            return request.data;
+        } catch (error) {
+            dispatch(errorGlobal(error.response.data.message));
+            throw error;
+        }
+    }
+);
+
+export const getAdminArticle = createAsyncThunk(
+    'articles/getAdminArticle',
+    async (_id, { dispatch }) => {
+        try {
+            const request = await axios.get(
+                `/api/articles/article/${_id}`,
+                getAuthHeader()
+            );
+            return request.data;
         } catch (error) {
             dispatch(errorGlobal(error.response.data.message));
             throw error;
