@@ -7,8 +7,10 @@ import { AdminTitle, errorHelper, Loader } from '../../../../utils/tools';
 import { useFormik, FieldArray, FormikProvider } from 'formik';
 import { formValues, validation } from './validationSchema';
 
+import WYSIWYG from '../../../../utils/form/tiptap';
+
 //redux
-import { getCategories } from '../../../../store/actions/articles';
+import { getCategories, addArticle } from '../../../../store/actions/articles';
 import { useSelector, useDispatch } from 'react-redux';
 
 //MUI
@@ -37,9 +39,17 @@ const AddArticles = () => {
         initialValues: formValues,
         validationSchema: validation,
         onSubmit: (values) => {
-            console.log(values);
+            dispatch(addArticle(values))
+                .unwrap()
+                .then(() => {
+                    navigate('/dashboard/articles');
+                });
         },
     });
+
+    const handleEditorState = (state) => {
+        formik.setFieldValue('content', state, true);
+    };
 
     useEffect(() => {
         dispatch(getCategories({}));
@@ -59,7 +69,11 @@ const AddArticles = () => {
                     />
                 </div>
 
-                <div className='form-group'>WYSIWYG</div>
+                <div className='form-group'>
+                    <WYSIWYG
+                        setEditorState={(state) => handleEditorState(state)}
+                    />
+                </div>
 
                 <div className='form-group'>
                     <TextField
@@ -203,6 +217,13 @@ const AddArticles = () => {
                         <MenuItem value=''>
                             <em>None</em>
                         </MenuItem>
+                        {articles.categories
+                            ? articles.categories.map((item) => (
+                                  <MenuItem key={item._id} value={item._id}>
+                                      {item.name}
+                                  </MenuItem>
+                              ))
+                            : null}
                     </Select>
                     {formik.errors.category && formik.touched.category ? (
                         <FormHelperText error={true}>

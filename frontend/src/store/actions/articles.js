@@ -3,6 +3,24 @@ import { errorGlobal, successGlobal } from '../reducers/notifications';
 import { getAuthHeader } from '../../utils/tools';
 import axios from 'axios';
 
+export const addArticle = createAsyncThunk(
+    'articles/addArticle',
+    async (article, { dispatch }) => {
+        try {
+            const request = await axios.post(
+                `/api/articles`,
+                article,
+                getAuthHeader()
+            );
+            dispatch(successGlobal('Post created!!'));
+            return request.data
+        } catch (error) {
+            dispatch(errorGlobal(error.response.data.message));
+            throw error;
+        }
+    }
+);
+
 export const getCategories = createAsyncThunk(
     'articles/getCategories',
     async (obj, { dispatch }) => {
