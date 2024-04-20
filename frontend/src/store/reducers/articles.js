@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getCategories, addArticle } from '../actions/articles';
+import { getCategories, addArticle, updateArticle } from '../actions/articles';
 
 export const articlesSlice = createSlice({
     name: 'articles',
